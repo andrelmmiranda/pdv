@@ -21,5 +21,12 @@ module.exports = {
         const query = "SELECT * FROM categorias"
         const categorias = await pool.query(query)
         return categorias.rows
+    },
+
+    async getUSer(email) {
+        const query = "SELECT * FROM usuarios WHERE email = $1"
+        const values = [email]
+        const usuario = await pool.query(query, values)
+        return usuario.rows[0]
     }
 }
