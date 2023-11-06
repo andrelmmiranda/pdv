@@ -1,4 +1,4 @@
-const pool = require('../config/connection')
+const pool = require('../data/db')
 const bcrypt = require('bcrypt')
 const jwt = require('jsonwebtoken')
 const { validarCampos } = require('../utils/validarcampos')
@@ -34,19 +34,19 @@ const login = async (req, res) => {
     }
 
     try {
-        const usuario = await pool.query('select * from usuarios where email = $1', [email])
+        const usuario = await pool.getUSer(email)
 
-        if (usuario.rowCount < 1) {
+        if (!usuario) {
             return res.status(404).json({ mensagem: 'Email ou senha inválidos' })
         }
-        const senhaValida = await bcrypt.compare(senha, usuario.rows[0].senha)
+        const senhaValida = await bcrypt.compare(senha, usuario.senha)
 
         if (!senhaValida) {
             return res.status(404).json({ mensagem: 'Email ou senha inválidos' })
         }
-        const token = jwt.sign({ id: usuario.rows[0].id }, process.env.SENHA, { expiresIn: '8h' })
+        const token = jwt.sign({ id: usuario.id }, process.env.SENHA, { expiresIn: '8h' })
 
-        const { senha: _, ...usuarioLogado } = usuario.rows[0]
+        const { senha: _, ...usuarioLogado } = usuario
 
         return res.json({ usuario: usuarioLogado, token })
 
