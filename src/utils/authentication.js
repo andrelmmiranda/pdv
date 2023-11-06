@@ -3,6 +3,7 @@ const pool = require('../config/connection')
 
 const autenticarUsuario = async (req, res, next) => {
     const { authorization } = req.headers
+    console.log(authorization);
 
     if (!authorization) {
         return res.status(401).json({ mensagem: 'Não autorizado' })
