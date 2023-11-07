@@ -1,6 +1,6 @@
 const jwt = require('jsonwebtoken')
 const pool = require('../config/connection')
-
+require('dotenv').config()
 const autenticarUsuario = async (req, res, next) => {
     const { authorization } = req.headers
 
