@@ -27,6 +27,7 @@ const casdastrarUsuario = async (req, res) => {
         return res.status(500).json({ mensagem: 'Erro inesperado do servidor' })
     }
 }
+
 const login = async (req, res) => {
     const { email, senha } = req.body
 
@@ -88,10 +89,22 @@ const editarUsuario = async (req, res) => {
     }
 }
 
+const detalharUsuario = async (req, res)=>{
+    try {
+        const [ tokenType, tokenValue ] = req.headers.authorization?.split(' ') || ['', ''];
+
+        const data = await pool.getUserByTokenId(tokenValue);
+        return res.status(200).json(data);
+    } catch (error) {
+        return res.status(404).json({ mensagem: error.message });
+    }
+}
+
 module.exports = {
     casdastrarUsuario,
     login,
-    editarUsuario
+    editarUsuario,
+    detalharUsuario
 }
 
 
