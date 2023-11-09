@@ -6,13 +6,13 @@ const { casdastrarUsuario, login, editarUsuario, detalharUsuario } = require('..
 const rotas = express.Router();
 
 
-rotas.get('/categorias', listarCategorias)
-rotas.post('/usuarios', casdastrarUsuario)
+rotas.get('/categoria', listarCategorias)
+rotas.post('/usuario', casdastrarUsuario)
 rotas.post('/login', login)
 
 
 rotas.use(autenticarUsuario)
-rotas.put('/usuarios', editarUsuario)
 rotas.get('/usuario', detalharUsuario)
+rotas.put('/usuario', editarUsuario)
 
 module.exports = rotas

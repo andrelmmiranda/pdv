@@ -4,7 +4,13 @@ const app  = express()
 const cors = require('cors');
 
 app.use(cors());
+require('dotenv').config
+
 app.use(express.json());
 app.use(rotas)
 
-app.listen(3000)
+const port = process.env.PORT || 3000;
+
+app.listen(process.env.PORT, () => {
+    console.log(`Servidor ativo na porta ${port}`);
+});
