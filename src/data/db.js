@@ -40,6 +40,13 @@ module.exports = {
         return categorias.rows
     },
 
+    async getCategorieById(categoria_id) {
+        const query = "SELECT * FROM categorias WHERE id = $1"
+        const values = [categoria_id]
+        const categorias = await pool.query(query, values)
+        return categorias.rows[0]
+    },
+
     async existEmailCadastrado(email) {
         return await this.getUSerByEmail(email) != null
     },
@@ -50,5 +57,12 @@ module.exports = {
         const values = [email, id]
         const usuario = await pool.query(query, values)
         return usuario.rowCount != 0
+    },
+
+    async createProduct(descricao, quantidade_estoque, valor, categoria_id) {
+        const query = "INSERT INTO produtos (descricao, quantidade_estoque, valor, categoria_id) VALUES ($1, $2, $3, $4)"
+        const values = [descricao, quantidade_estoque, valor, categoria_id]
+        const produto = await pool.query(query, values)
+        return produto.rows[0]
     }
 }
