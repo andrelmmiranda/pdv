@@ -86,4 +86,11 @@ module.exports = {
         return produtos.rows[0]
     },
 
+    async showProduct(id) {
+        const query = "SELECT * FROM produtos WHERE id = $1"
+        const values = [id]
+        const produtos = await pool.query(query, values)
+        return produtos.rows[0]
+    },
+
 }
