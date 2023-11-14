@@ -105,11 +105,35 @@ const detalharProduto = async (req, res) => {
     }
 }
 
+const deletarProduto = async (req, res) => {
+    const { id } = req.params
+
+    try {
+
+        const produto = await pool.deleteProductsById(id)
+        if (!produto) {
+            return res.status(400).json({ mensagem: 'Produto não encontrado' })
+        }
+
+        const produtoDeletado = await pool.deleteProduct(id)
+        console.log(produtoDeletado);
+
+        return res.status(200).json(produtoDeletado);
+
+
+    } catch (error) {
+        console.log(error)
+        return res.status(500).json({ mensagem: 'Erro inesperado do servidor' })
+    }
+
+}
+
 
 
 module.exports = {
     cadastrarProduto,
     editarProduto,
     listarProdutos,
-    detalharProduto
+    detalharProduto,
+    deletarProduto
 }
