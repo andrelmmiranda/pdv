@@ -31,6 +31,30 @@ const cadastrarProduto = async (req, res) => {
 }
 
 
+const listarProdutos = async (req, res) => {
+    const { categoria_id } = req.body
+
+    try {
+        if (categoria_id) {
+            const produtos = await pool.getProductsById(categoria_id)
+            if (produtos) {
+                res.status(200).json(produtos);
+            } else {
+                res.status(404).json({ message: 'Não existe produto para a categoria informada' });
+            }
+        } else {
+            const produtos = await pool.getProducts()
+            res.status(200).json(produtos)
+        }
+
+    } catch (error) {
+        res.status(500).json({ message: 'Erro inesperado do servidor' })
+    }
+}
+
+
+
 module.exports = {
-    cadastrarProduto
+    cadastrarProduto,
+    listarProdutos
 }
