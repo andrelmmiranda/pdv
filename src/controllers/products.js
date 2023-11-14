@@ -30,6 +30,39 @@ const cadastrarProduto = async (req, res) => {
 
 }
 
+const editarProduto = async (req, res) => {
+    const { descricao, quantidade_estoque, valor, categoria_id } = req.body
+    const { id } = req.params
+
+    try {
+
+        const produto = await pool.getProductsById(id)
+        if (!produto) {
+            return res.status(400).json({ mensagem: 'Produto não encontrado' })
+        }
+
+        if (!validarCampos(descricao, quantidade_estoque, valor, categoria_id)) {
+            return res.status(400).json({ mensagem: 'Todos os campos são obrigatórios' })
+        }
+
+        const categoria = await pool.getCategorieById(categoria_id)
+        if (!categoria) {
+            return res.status(404).json({ mensagem: 'Categoria não encontrada' })
+        }
+
+        const produtoAtualizado = await pool.updateProduct(descricao, quantidade_estoque, valor, categoria_id, id)
+        console.log(produtoAtualizado);
+
+        return res.status(200).json(produtoAtualizado);
+
+
+    } catch (error) {
+        console.log(error)
+        return res.status(500).json({ mensagem: 'Erro inesperado do servidor' })
+    }
+
+}
+
 
 const listarProdutos = async (req, res) => {
     const { categoria_id } = req.body
@@ -56,5 +89,6 @@ const listarProdutos = async (req, res) => {
 
 module.exports = {
     cadastrarProduto,
+    editarProduto,
     listarProdutos
 }

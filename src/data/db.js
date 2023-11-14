@@ -79,4 +79,11 @@ module.exports = {
         return produtos.rows[0]
     },
 
+    async updateProduct(descricao, quantidade_estoque, valor, categoria_id, id) {
+        const query = 'UPDATE produtos SET descricao = $1, quantidade_estoque = $2, valor = $3, categoria_id = $4 WHERE id = $5 RETURNING *'
+        const values = [descricao, quantidade_estoque, valor, categoria_id, id]
+        const produtos = await pool.query(query, values)
+        return produtos.rows[0]
+    },
+
 }
