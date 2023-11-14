@@ -85,10 +85,31 @@ const listarProdutos = async (req, res) => {
     }
 }
 
+const detalharProduto = async (req, res) => {
+    const { id } = req.params
+
+    if (!id || id !== String) {
+        return res.status(400).json({ mensagem: 'O id do produto é um campo obrigatório' })
+    }
+
+    try {
+        const produto = await pool.showProduct(id)
+        if (produto) {
+            res.status(200).json(produto);
+        } else {
+            res.status(404).json({ message: 'Produto não existe' });
+        }
+
+    } catch (error) {
+        res.status(500).json({ message: 'Erro inesperado do servidor' })
+    }
+}
+
 
 
 module.exports = {
     cadastrarProduto,
     editarProduto,
-    listarProdutos
+    listarProdutos,
+    detalharProduto
 }
