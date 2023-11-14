@@ -64,5 +64,19 @@ module.exports = {
         const values = [descricao, quantidade_estoque, valor, categoria_id]
         const produto = await pool.query(query, values)
         return produto.rows[0]
-    }
+    },
+
+    async getProducts() {
+        const query = "SELECT * FROM produtos"
+        const produtos = await pool.query(query)
+        return produtos.rows
+    },
+
+    async getProductsById(categoria_id) {
+        const query = "SELECT * FROM produtos WHERE categoria_id = $1"
+        const values = [categoria_id]
+        const produtos = await pool.query(query, values)
+        return produtos.rows[0]
+    },
+
 }
