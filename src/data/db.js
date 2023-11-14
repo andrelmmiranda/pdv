@@ -93,4 +93,47 @@ module.exports = {
         return produtos.rows[0]
     },
 
+    async createClient(nome, email, cpf) {
+        const query = "INSERT INTO clientes (nome, email, cpf) VALUES ($1, $2, $3)"
+        const values = [nome, email, cpf]
+        const cliente = await pool.query(query, values)
+        return cliente.rows[0]
+    },
+
+    async getClients() {
+        const query = "SELECT * FROM clientes"
+        const clientes = await pool.query(query)
+        return clientes.rows
+    },
+
+    async clientDetail(id) {
+        const query = "SELECT * FROM clientes WHERE id = $1"
+        const values = [id]
+        const cliente = await pool.query(query, values)
+        return cliente.rows[0]
+    },
+
+    async updateClient(nome, email, cpf, id) {
+        const query = 'UPDATE clientes SET nome = $1, email = $2, cpf = $3 WHERE id = $4 RETURNING *'
+        const values = [nome, email, cpf, id]
+        const cliente = await pool.query(query, values)
+        return cliente.rows[0]
+    },
+
+    async deleteProduct(id) {
+        const query = "DELETE FROM produtos WHERE id = $1"
+        const values = [id]
+        const produtos = await pool.query(query, values)
+        return produtos.rows[0]
+    },
+
+    async deleteProductsById(id) {
+        const query = "SELECT * FROM produtos WHERE id = $1"
+        const values = [id]
+        const produtos = await pool.query(query, values)
+        return produtos.rows[0]
+    },
+
+
+
 }
