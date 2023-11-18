@@ -2,6 +2,7 @@ const express = require('express');
 const rotas = require('./routers/routers');
 const app  = express()
 const cors = require('cors');
+const aws = require('aws-sdk');
 
 app.use(cors());
 require('dotenv').config

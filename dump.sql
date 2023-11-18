@@ -35,7 +35,8 @@ CREATE TABLE IF NOT EXISTS produtos (
     descricao TEXT NOT NULL,
     quantidade_estoque INTEGER NOT NULL,
     valor INTEGER NOT NULL,
-    categoria_id INTEGER NOT NULL REFERENCES categorias(id) 
+    categoria_id INTEGER NOT NULL REFERENCES categorias(id) ,
+    produto_imagem text
 );
 
 -- Criação da tabela 'clientes'
@@ -50,5 +51,20 @@ CREATE TABLE IF NOT EXISTS clientes (
     bairro TEXT,
     cidade TEXT,
     estado TEXT
+);
+
+create table pedidos (
+id serial primary key,
+cliente_id integer references clientes(id),
+observacao text,
+valor_total integer
+);
+
+create table pedido_produtos (
+id serial primary key,
+pedido_id integer references pedidos(id),
+produto_id integer references produtos(id),
+quantidade_produto integer not null,
+valor_produto integer
 );
 

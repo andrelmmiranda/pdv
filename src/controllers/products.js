@@ -1,4 +1,5 @@
 const pool = require('../data/db')
+const { uploadImagem } = require('../imgstorage')
 const { validarCampos } = require('../utils/validarcampos')
 
 
@@ -128,6 +129,35 @@ const deletarProduto = async (req, res) => {
 
 }
 
+const inserirImagemProduto = async (req, res) => {
+    const { id } = req.params;
+    const { originalname, mimetype, buffer } = req.file;
+  
+    try {
+      const produto = await pool.showProduct(id);
+  
+      if (!produto) {
+        return res.status(404).json({ message: 'Produto não encontrado' });
+      }
+  
+      const imagem = await uploadImagem(`produtos/${id}/${originalname}`, buffer, mimetype);
+  
+      // Corrija a passagem de parâmetros para updateProductImg
+      const produtoAtualizado = await pool.updateProductImg(imagem.url, id); // Passando 'imagem.url' e 'id'
+  
+      return res.status(200).json({ Mensagem: "Imagem cadastrada com sucesso!", produto: produtoAtualizado });
+    } catch (error) {
+      console.log(error);
+      return res.status(400).json(error.message);
+    }
+  };
+  
+
+    
+
+
+
+
 
 
 module.exports = {
@@ -135,5 +165,6 @@ module.exports = {
     editarProduto,
     listarProdutos,
     detalharProduto,
-    deletarProduto
+    deletarProduto,
+    inserirImagemProduto
 }
