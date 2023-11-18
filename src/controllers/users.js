@@ -9,6 +9,9 @@ require('dotenv').config()
 const casdastrarUsuario = async (req, res) => {
     const { nome, email, senha } = req.body
 
+    if (!validarCampos(nome, email, senha)) {
+        return res.status(400).json({ mensagem: 'Email ou senha são obrigatórios' })
+    }
 
     try {
 
