@@ -24,9 +24,10 @@ rotas.get('/produto', listarProdutos)
 rotas.get('/produto/:id', detalharProduto)
 rotas.delete('/produto/:id', deletarProduto) 
 rotas.post("/produto/:id/imagem", multer.single('imagem'), inserirImagemProduto)
+rotas.delete('/produto/:id', deletarProduto) 
+
+
 rotas.post('/cliente', cadastrarClientes)
-
-
 rotas.get('/cliente', listarClientes)
 rotas.get('/cliente/:id', detalharCliente)
 rotas.put('/cliente/:id', editarCliente)

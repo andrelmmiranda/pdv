@@ -1,5 +1,5 @@
 const pool = require('../data/db')
-const { uploadImagem } = require('../imgstorage')
+const { uploadImagem, deleteImagem } = require('../imgstorage')
 const { validarCampos } = require('../utils/validarcampos')
 
 
@@ -116,10 +116,18 @@ const deletarProduto = async (req, res) => {
             return res.status(400).json({ mensagem: 'Produto não encontrado' })
         }
 
+        //Fazer aqui a verificaçao para saber se o produto esta vinculado a algum pedido
+
+        if (produto.produto_imagem){
+            await deleteImagem(produto.produto_imagem);
+        }
+
+        
+
         const produtoDeletado = await pool.deleteProduct(id)
         console.log(produtoDeletado);
 
-        return res.status(200).json(produtoDeletado);
+        return res.status(200).json({ message: "Produto removido!" });
 
 
     } catch (error) {
@@ -142,8 +150,8 @@ const inserirImagemProduto = async (req, res) => {
   
       const imagem = await uploadImagem(`produtos/${id}/${originalname}`, buffer, mimetype);
   
-      // Corrija a passagem de parâmetros para updateProductImg
-      const produtoAtualizado = await pool.updateProductImg(imagem.url, id); // Passando 'imagem.url' e 'id'
+      
+      const produtoAtualizado = await pool.updateProductImg(imagem.url, id);
   
       return res.status(200).json({ Mensagem: "Imagem cadastrada com sucesso!", produto: produtoAtualizado });
     } catch (error) {

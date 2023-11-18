@@ -25,7 +25,12 @@ const uploadImagem = async (path, buffer, mimetype) => {
 }
 
 
-module.exports = {
-    uploadImagem
+const deleteImagem = async (path) => {
+    await s3.deleteObject({
+        Bucket: process.env.BUCKET_NAME,
+        Key: path
+    }).promise()
 }
+
+module.exports = { uploadImagem, deleteImagem }
 
