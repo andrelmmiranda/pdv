@@ -1,6 +1,6 @@
 const pool = require('../data/db')
 const { uploadImagem, deleteImagem } = require('../imgstorage')
-const { validarCampos } = require('../utils/validarcampos')
+const { validarCampos, campoNegativo } = require('../utils/validarcampos')
 
 
 
@@ -13,6 +13,10 @@ const cadastrarProduto = async (req, res) => {
         return res.status(400).json({ mensagem: 'Campos obrigatórios' })
     }
 
+    if (!campoNegativo(quantidade_estoque, valor)) {
+        return res.status(400).json({ mensagem: 'Quantidade e valor não podem ser negativos' })
+    }
+
     try {
 
         const categoria = await pool.getCategorieById(categoria_id)
@@ -22,7 +26,7 @@ const cadastrarProduto = async (req, res) => {
         }
 
         const produto = await pool.createProduct(descricao, quantidade_estoque, valor, categoria_id)
-        return res.json(produto)
+        return res.status(201).send()
 
     } catch (error) {
         console.log(error)
@@ -35,9 +39,14 @@ const editarProduto = async (req, res) => {
     const { descricao, quantidade_estoque, valor, categoria_id } = req.body
     const { id } = req.params
 
+    if (!campoNegativo(quantidade_estoque, valor)) {
+        return res.status(400).json({ mensagem: 'Quantidade e valor não podem ser negativos' })
+    }
+
     try {
 
-        const produto = await pool.getProductsById(id)
+        const produto = await pool.getProductById(id)
+
         if (!produto) {
             return res.status(400).json({ mensagem: 'Produto não encontrado' })
         }
@@ -66,21 +75,20 @@ const editarProduto = async (req, res) => {
 
 
 const listarProdutos = async (req, res) => {
-    const { categoria_id } = req.body
+    const { categoria_id } = req.query
 
     try {
         if (categoria_id) {
-            const produtos = await pool.getProductsById(categoria_id)
-            if (produtos) {
-                res.status(200).json(produtos);
-            } else {
-                res.status(404).json({ message: 'Não existe produto para a categoria informada' });
+            const produtos = await pool.getProductByCategorieId(categoria_id)
+
+            if (produtos.length == 0) {
+                return res.status(404).json({ message: 'Não existe produto para a categoria informada' });
             }
-        } else {
-            const produtos = await pool.getProducts()
-            res.status(200).json(produtos)
+            return res.status(200).json(produtos);
         }
 
+        const produtos = await pool.getProducts()
+        return res.status(200).json(produtos)
     } catch (error) {
         res.status(500).json({ message: 'Erro inesperado do servidor' })
     }
@@ -89,17 +97,17 @@ const listarProdutos = async (req, res) => {
 const detalharProduto = async (req, res) => {
     const { id } = req.params
 
-    if (!id || id !== String) {
+    if (!id) {
         return res.status(400).json({ mensagem: 'O id do produto é um campo obrigatório' })
     }
 
     try {
-        const produto = await pool.showProduct(id)
-        if (produto) {
-            res.status(200).json(produto);
-        } else {
-            res.status(404).json({ message: 'Produto não existe' });
+        const produto = await pool.getProductById(id)
+
+        if (!produto) {
+            return res.status(404).json({ message: 'Produto não existe' });
         }
+        return res.status(200).json(produto);
 
     } catch (error) {
         res.status(500).json({ message: 'Erro inesperado do servidor' })
@@ -118,11 +126,11 @@ const deletarProduto = async (req, res) => {
 
         //Fazer aqui a verificaçao para saber se o produto esta vinculado a algum pedido
 
-        if (produto.produto_imagem){
+        if (produto.produto_imagem) {
             await deleteImagem(produto.produto_imagem);
         }
 
-        
+
 
         const produtoDeletado = await pool.deleteProduct(id)
         console.log(produtoDeletado);
@@ -140,28 +148,28 @@ const deletarProduto = async (req, res) => {
 const inserirImagemProduto = async (req, res) => {
     const { id } = req.params;
     const { originalname, mimetype, buffer } = req.file;
-  
-    try {
-      const produto = await pool.showProduct(id);
-  
-      if (!produto) {
-        return res.status(404).json({ message: 'Produto não encontrado' });
-      }
-  
-      const imagem = await uploadImagem(`produtos/${id}/${originalname}`, buffer, mimetype);
-  
-      
-      const produtoAtualizado = await pool.updateProductImg(imagem.url, id);
-  
-      return res.status(200).json({ Mensagem: "Imagem cadastrada com sucesso!", produto: produtoAtualizado });
-    } catch (error) {
-      console.log(error);
-      return res.status(400).json(error.message);
-    }
-  };
-  
 
-    
+    try {
+        const produto = await pool.showProduct(id);
+
+        if (!produto) {
+            return res.status(404).json({ message: 'Produto não encontrado' });
+        }
+
+        const imagem = await uploadImagem(`produtos/${id}/${originalname}`, buffer, mimetype);
+
+
+        const produtoAtualizado = await pool.updateProductImg(imagem.url, id);
+
+        return res.status(200).json({ Mensagem: "Imagem cadastrada com sucesso!", produto: produtoAtualizado });
+    } catch (error) {
+        console.log(error);
+        return res.status(400).json(error.message);
+    }
+};
+
+
+
 
 
 
