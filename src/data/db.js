@@ -107,6 +107,20 @@ module.exports = {
         return clientes.rows
     },
 
+    async existEmailCliente(email) {
+        const query = "SELECT * FROM clientes WHERE email = $1"
+        const values = [email]
+        const usuario = await pool.query(query, values)
+        return usuario.rows[0]
+    },
+
+    async existCpfCliente(cpf) {
+        const query = "SELECT * FROM clientes WHERE cpf = $1"
+        const values = [cpf]
+        const usuario = await pool.query(query, values)
+        return usuario.rows[0]
+    },
+
     async clientDetail(id) {
         const query = "SELECT * FROM clientes WHERE id = $1"
         const values = [id]
@@ -128,12 +142,7 @@ module.exports = {
         return produtos.rows[0]
     },
 
-    async deleteProductsById(id) {
-        const query = "SELECT * FROM produtos WHERE id = $1"
-        const values = [id]
-        const produtos = await pool.query(query, values)
-        return produtos.rows[0]
-    },
+   
 
     async updateProductImg(produto_imagem, id) {
         const query = `UPDATE produtos SET produto_imagem = $1 WHERE id = $2`;

@@ -119,30 +119,22 @@ const deletarProduto = async (req, res) => {
 
     try {
 
-        const produto = await pool.deleteProductsById(id)
+        const produto = await pool.getProductById(id)
         if (!produto) {
             return res.status(400).json({ mensagem: 'Produto não encontrado' })
         }
 
-        //Fazer aqui a verificaçao para saber se o produto esta vinculado a algum pedido
-
         if (produto.produto_imagem) {
             await deleteImagem(produto.produto_imagem);
         }
-
-
-
-        const produtoDeletado = await pool.deleteProduct(id)
-        console.log(produtoDeletado);
-
+        
+        const produtoDeletado = await pool.deleteProduct(id)  
         return res.status(200).json({ message: "Produto removido!" });
-
 
     } catch (error) {
         console.log(error)
         return res.status(500).json({ mensagem: 'Erro inesperado do servidor' })
     }
-
 }
 
 const inserirImagemProduto = async (req, res) => {
