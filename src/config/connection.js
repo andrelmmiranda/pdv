@@ -1,7 +1,7 @@
 const { Pool } = require('pg');
 require('dotenv').config();
 
-let pool; // Declaração da variável pool fora do bloco condicional
+let pool;
 
 if (process.env.NODE_ENV === 'teste') {
     pool = new Pool({
