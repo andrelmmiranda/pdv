@@ -1,3 +1,4 @@
+const { send } = require('../config/nodemailer')
 const pool = require('../data/db')
 const { validarCampos } = require('../utils/validarcampos')
 
@@ -36,9 +37,13 @@ const cadastrarPedido = async (req, res) => {
         }
         const pedido = await pool.createOrder(cliente_id, observacao, valor_total)
 
+        const destinatario = cliente.email
+        const assunto = 'Pedido Efetuado com Sucesso';
+        const corpo = `Parabens ${cliente.nome} , seu pedido foi efetuado com sucesso!`;
+        send(destinatario, assunto, corpo)
+
         return res.status(201).send()
 
-        // Enviar email pra cliente notificando do pedido
 
     } catch (error) {
         return res.status(500).json({ mensagem: 'Erro inesperado do servidor' })
