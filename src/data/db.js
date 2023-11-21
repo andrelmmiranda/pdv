@@ -142,18 +142,18 @@ module.exports = {
         return produtos.rows[0]
     },
 
-   
-
     async updateProductImg(produto_imagem, id) {
         const query = `UPDATE produtos SET produto_imagem = $1 WHERE id = $2`;
         const values = [produto_imagem, id];
         const produtos = await pool.query(query, values);
         return produtos.rows[0];
-    }
+    },
 
-
-
-
-
+    async createOrder(cliente_id, observacao, valor_total) {
+        const query = "INSERT INTO pedidos (cliente_id, observacao,valor_total) VALUES ($1, $2, $3)"
+        const values = [cliente_id, observacao, valor_total]
+        const pedido = await pool.query(query, values)
+        return pedido.rows[0]
+    },
 
 }
