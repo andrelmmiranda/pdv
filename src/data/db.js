@@ -183,5 +183,102 @@ module.exports = {
         return pedidos.rows[0]
     },
 
+    // async getOrderAndProducts(cliente_id){
+    //     try {
+    //         if(!!cliente_id){
+    //             const query = `
+    //                 SELECT JSON_BUILD_OBJECT(
+    //                     'id', p.id, 
+    //                     'valor_total', p.valor_total, 
+    //                     'observacao', p.observacao, 
+    //                     'cliente_id', p.cliente_id
+    //                 ) AS pedido,
+    //                     ARRAY(
+    //                         SELECT JSONB_BUILD_OBJECT(
+    //                             'id', pp.id,
+    //                             'quantidade_produtos', pp.quantidade_produto,
+    //                             'valor_produto', pp.valor_produto,
+    //                             'pedido_id', pp.pedido_id,
+    //                             'produto_id', pp.produto_id
+    //                         )
+    //                         FROM
+    //                             pedido_produtos pp
+    //                         WHERE
+    //                             p.id = pp.pedido_id
+    //                     ) AS pedido_produtos
+    //                 FROM
+    //                     pedidos p
+    //                 LEFT JOIN
+    //                     pedido_produtos pp
+    //                 ON
+    //                     p.id = pp.pedido_id
+    //                 LEFT JOIN
+    //                     clientes c
+    //                 ON
+    //                     c.id = p.cliente_id
+    //                 WHERE
+    //                     c.id=$1
+    //                 GROUP BY
+    //                     p.id;
+    //             `;
+
+    //         const values = [ cliente_id ];
+
+    //         return (await pool.query(query, values)).rows;
+    //     }
+    //         return (await pool.query('select id, valor_total, observacao, cliente_id from pedidos')).rows;
+    //     } catch (error) {
+    //         throw error;
+    //     }
+    // }  
+
+    async getOrderAndProducts(cliente_id){
+        try {
+                const query = `
+                    SELECT JSON_BUILD_OBJECT(
+                        'id', p.id, 
+                        'valor_total', p.valor_total, 
+                        'observacao', p.observacao, 
+                        'cliente_id', p.cliente_id
+                    ) AS pedido,
+                        ARRAY(
+                            SELECT JSONB_BUILD_OBJECT(
+                                'id', pp.id,
+                                'quantidade_produtos', pp.quantidade_produto,
+                                'valor_produto', pp.valor_produto,
+                                'pedido_id', pp.pedido_id,
+                                'produto_id', pp.produto_id
+                            )
+                            FROM
+                                pedido_produtos pp
+                            WHERE
+                                p.id = pp.pedido_id
+                        ) AS pedido_produtos
+                    FROM
+                        pedidos p
+                    LEFT JOIN
+                        pedido_produtos pp
+                    ON
+                        p.id = pp.pedido_id
+                    LEFT JOIN
+                        clientes c
+                    ON
+                        c.id = p.cliente_id
+                    ${ !!cliente_id ? 
+                        'WHERE c.id=$1' :
+                        'WHERE c.id is not null'
+                    }
+                    GROUP BY
+                        p.id;
+                `;
+
+            return !! cliente_id ?
+                (await pool.query(query, [ cliente_id ])).rows :
+                (await pool.query(query)).rows;
+        
+        } catch (error) {
+            throw error;
+        }
+    }  
 }
 
