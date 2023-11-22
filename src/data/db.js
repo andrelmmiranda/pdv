@@ -150,10 +150,38 @@ module.exports = {
     },
 
     async createOrder(cliente_id, observacao, valor_total) {
-        const query = "INSERT INTO pedidos (cliente_id, observacao,valor_total) VALUES ($1, $2, $3)"
+        const query = "INSERT INTO pedidos (cliente_id, observacao,valor_total) VALUES ($1, $2, $3) RETURNING *"
         const values = [cliente_id, observacao, valor_total]
         const pedido = await pool.query(query, values)
         return pedido.rows[0]
     },
 
+    async getOrders() {
+        const query = "SELECT * FROM pedidos"
+        const pedidos = await pool.query(query)
+        return pedidos.rows
+    },
+
+    async getOrdersClientId(cliente_id) {
+        const query = "SELECT * FROM pedidos WHERE cliente_id = $1"
+        const values = [cliente_id]
+        const pedidos = await pool.query(query, values)
+        return pedidos.rows
+    },
+
+    async createOrderProduct(quantidade_produto, valor_produto, pedido_id, produto_id) {
+        const query = "INSERT INTO pedido_produtos (quantidade_produto, valor_produto, pedido_id, produto_id) VALUES ($1, $2, $3, $4)"
+        const values = [quantidade_produto, valor_produto, pedido_id, produto_id]
+        const pedido_produtos = await pool.query(query, values)
+        return pedido_produtos.rows[0]
+    },
+
+    async getOrdertById(pedido_id) {
+        const query = "SELECT * FROM pedidos WHERE id = $1"
+        const values = [pedido_id]
+        const pedidos = await pool.query(query, values)
+        return pedidos.rows[0]
+    },
+
 }
+
