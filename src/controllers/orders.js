@@ -55,6 +55,20 @@ const cadastrarPedido = async (req, res) => {
     }
 }
 
+const listarPedidos = async (req, res)=>{
+    try {
+        const { cliente_id } = req.query;
+        const data = await pool.getOrderAndProducts(cliente_id);
+
+        return !!data.length ? 
+            res.status(200).json(data):
+            res.status(204).json();  
+    } catch (error) {
+        return res.status(400).json({ mensagem: error.message });
+    }   
+}
+
 module.exports = {
-    cadastrarPedido
+    cadastrarPedido,
+    listarPedidos
 }
