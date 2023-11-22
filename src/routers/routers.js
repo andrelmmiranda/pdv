@@ -5,10 +5,9 @@ const { casdastrarUsuario, login, editarUsuario, detalharUsuario } = require('..
 const { cadastrarProduto, listarProdutos, editarProduto, detalharProduto, deletarProduto, inserirImagemProduto } = require('../controllers/products');
 const { cadastrarClientes, listarClientes, detalharCliente, editarCliente } = require('../controllers/clients')
 const multer = require('../utils/multer');
-const { cadastrarPedido } = require('../controllers/orders');
+const { cadastrarPedido, listarPedidos } = require('../controllers/orders');
 
 const rotas = express.Router();
-
 
 rotas.get('/categoria', listarCategorias)
 rotas.post('/usuario', casdastrarUsuario)
@@ -33,6 +32,7 @@ rotas.get('/cliente', listarClientes)
 rotas.get('/cliente/:id', detalharCliente)
 rotas.put('/cliente/:id', editarCliente)
 
+rotas.get('/pedido', listarPedidos);
 rotas.post('/pedido', cadastrarPedido)
 
 module.exports = rotas
