@@ -34,8 +34,12 @@ const cadastrarPedido = async (req, res) => {
             }
 
             valor_total += produtoEncontrado.valor * quantidade_produto
+
+            const pedido = await pool.createOrder(cliente_id, observacao, valor_total)
+            console.log(pedido);
+
+            const pedidoProdutos = await pool.createOrderProduct(produto.quantidade_produto, produtoEncontrado.valor, pedido.id, produto.produto_id)
         }
-        const pedido = await pool.createOrder(cliente_id, observacao, valor_total)
 
         const destinatario = cliente.email
         const assunto = 'Pedido Efetuado com Sucesso';
@@ -46,9 +50,9 @@ const cadastrarPedido = async (req, res) => {
 
 
     } catch (error) {
+        console.log(error.message);
         return res.status(500).json({ mensagem: 'Erro inesperado do servidor' })
     }
-
 }
 
 module.exports = {
